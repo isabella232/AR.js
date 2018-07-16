@@ -5804,6 +5804,7 @@ ARjs.Source = THREEx.ArToolkitSource = function(parameters){
 		// resolution displayed for the source 
 		displayWidth: 640,
 		displayHeight: 480,
+		parentId: null
 	}
 	//////////////////////////////////////////////////////////////////////////////
 	//		setParameters
@@ -5848,6 +5849,14 @@ ARjs.Source.prototype.init = function(onReady, onError){
                 console.assert(false)
         }
 
+		if (this.parameters.parentId && !document.querySelector('#' + this.parameters.parentId)) {
+			this.parentElement = document.createElement('div');
+			this.parentElement.setAttribute('id', this.parameters.parentId);
+			this.parentElement.style.width = '100%';
+			this.parentElement.style.overflow = 'hidden';
+			this.parentElement.style.position = 'relative';
+			document.body.appendChild(this.parentElement);
+		}
 	// attach
         this.domElement = domElement
         this.domElement.style.position = 'absolute'
@@ -5857,7 +5866,11 @@ ARjs.Source.prototype.init = function(onReady, onError){
 
 	return this
         function onSourceReady(){
-		document.body.appendChild(_this.domElement);
+			if (document.querySelector('#' + _this.parameters.parentId)) {
+				document.querySelector('#' + _this.parameters.parentId).appendChild(_this.domElement);
+			} else {
+				document.body.appendChild(_this.domElement);
+			}
 
 		_this.ready = true
 
